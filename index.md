@@ -6,3 +6,165 @@ hide: true
 menu: nav/home.html
 ---
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #191970;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            color: #191970;
+        }
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            color: #191970;
+        }
+        .input-group {
+            margin-bottom: 15px;
+            color: #191970;
+        }
+        label {
+            margin-bottom: 5px;
+            color: #191970;
+        }
+        input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        button {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .signup-section {
+            margin-top: 20px;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+            color: #191970;
+        }
+        /* Smaller button styles */
+        .small-button {
+            padding: 5px;
+            font-size: 10px; /* Adjust font size as needed */
+            width: 70px; /* Set a specific width */
+            align-self: left; /* Center the small button */
+        }
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #191970;
+        }
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 300px;
+            border-radius: 5px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form class="login-form">
+            <h2>Login</h2>
+            <div class="input-group">
+                <label for="username">Username: </label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password: </label>
+                <input type="password" id="password" name="password" required> <!-- where password is hidden -->
+            </div>
+            <button type="submit">Login</button>
+            <br>
+            <button type="button" id="signupBtn" class="small-button">Sign Up</button>
+        </form>
+    </div>
+    <!-- The pop-up -->
+    <div id="signupModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h2>Sign Up</h2>
+            <form class="signup-form">
+                <div class="input-group">
+                    <label for="new-username">Create Username: </label>
+                    <input type="text" id="new-username" name="new-username" required>
+                </div>
+                <div class="input-group">
+                    <label for="new-password">Create Password: </label>
+                    <input type="password" id="new-password" name="new-password" required>
+                </div>
+                <button type="submit">Sign Up</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        // Get the modal
+        const modal = document.getElementById("signupModal");
+        // Get the button that opens the modal
+        const signupBtn = document.getElementById("signupBtn");
+        // Get the <span> element that closes the modal
+        const closeModal = document.getElementById("closeModal");
+        // When the user clicks the button, open the modal 
+        signupBtn.onclick = function() {
+            modal.style.display = "block";
+        }
+        // When the user clicks on <span> (x), close the modal
+        closeModal.onclick = function() {
+            modal.style.display = "none";
+        }
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
