@@ -107,11 +107,15 @@ menu: nav/home.html
             text-decoration: none;
             cursor: pointer;
         }
+        .status {
+            font-size: 10;
+            color: #006400;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <form class="login-form">
+        <form class="login-form" onsubmit="return false;"> <!-- Prevent default submission -->
             <h2>Login</h2>
             <div class="input-group">
                 <label for="username">Username: </label>
@@ -121,7 +125,9 @@ menu: nav/home.html
                 <label for="password">Password: </label>
                 <input type="password" id="password" name="password" required> <!-- where password is hidden -->
             </div>
-            <button type="submit">Login</button>
+            <p id="status"></p> <!-- Correct closing tag -->
+            <br>
+            <button onclick="checking_accesablilty()" type="button">Login</button> <!-- Change to type="button" -->
             <br>
             <button type="button" id="signupBtn" class="small-button">Sign Up</button>
         </form>
@@ -145,6 +151,8 @@ menu: nav/home.html
         </div>
     </div>
     <script>
+        const username = "PENPALS";
+        const password = "group1";
         // Get the modal
         const modal = document.getElementById("signupModal");
         // Get the button that opens the modal
@@ -165,6 +173,18 @@ menu: nav/home.html
                 modal.style.display = "none";
             }
         }
+        // Handle the login form submission
+        function checking_accesablilty() { // Correct function declaration
+            const user_input_username = document.getElementById("username").value;
+            const user_input_password = document.getElementById("password").value;
+            // Check credentials
+            if (user_input_username === username && user_input_password === password) {
+                document.getElementById("status").innerHTML = "Access granted";
+                statusElement.style.color = "#006400"
+            } else {
+                document.getElementById("status").innerHTML = "Access denied";
+                statusElement.style.color = "red"
+            }
+        }
     </script>
 </body>
-</html>
