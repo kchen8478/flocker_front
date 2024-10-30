@@ -26,3 +26,4 @@ header_pages:
   - navigation/hangouts.md
   - navigation/sports.md
   - navigation/authentication/login.md
+  - navigation/authentication/profile.md
