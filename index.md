@@ -7,68 +7,6 @@ hide: true
 ---
 
 <img src = "images/limitless connections.jpg">
-
-
-
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text Platform</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .text-platform {
-            width: 300px;
-            text-align: center;
-        }
-        textarea {
-            width: 100%;
-            height: 100px;
-            margin-bottom: 10px;
-            padding: 10px;
-            font-size: 16px;
-            resize: none;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .output {
-            margin-top: 20px;
-            font-weight: bold;
-            color: #333;
-        }
-    </style>
-</head>
-<body>
-
-<div class="text-platform">
-    <h2>Text Platform</h2>
-    <textarea id="textInput" placeholder="Type your message here..."></textarea>
-    <button onclick="sendMessage()">Send</button>
-    <div id="output" class="output"></div>
-</div>
-
-<script>
-    function sendMessage() {
-        const textInput = document.getElementById("textInput").value;
-        const output = document.getElementById("output");
-        output.innerText = `Message sent: ${textInput}`;
-    }
-</script>
-</body>
-</html>
-
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -86,7 +24,7 @@ hide: true
         }
         .navbar {
             width: 100%;
-            max-width: 800px;
+            max-width: 1200px;
             display: flex;
             justify-content: space-between;
             margin-bottom: 20px;
@@ -111,7 +49,7 @@ hide: true
         .dashboard {
             display: flex;
             width: 100%;
-            max-width: 800px;
+            max-width: 1200px;
             justify-content: space-between;
             gap: 20px;
         }
@@ -121,16 +59,59 @@ hide: true
             background-color: white;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
+            max-height: 400px;
+            overflow-y: auto;
         }
         .section h2 {
             margin-top: 0;
-            font-size: 1.5em;
+            font-size: 1.8em;
+            color: black;
         }
         .draft, .letter {
             border: 1px solid #ddd;
             padding: 10px;
             margin: 10px 0;
             border-radius: 4px;
+            font-size: 1.1em;
+            color: black;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .draft span {
+            flex-grow: 1;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            margin-right: 10px; /* Add some space between text and delete button */
+        }
+        .delete-btn {
+            background-color: #ff4d4d;
+            border: none;
+            color: white;
+            padding: 4px 6px; /* Smaller padding for a smaller button */
+            font-size: 0.8em; /* Smaller font size */
+            cursor: pointer;
+            border-radius: 4px;
+            height: 28px; /* Standard button height */
+            width: 28px; /* Standard button width */
+        }
+        .delete-btn:hover {
+            background-color: #ff1a1a;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 1.1em;
+            height: 120px;
+            resize: none;
+            margin-top: 10px;
+        }
+        button {
+            padding: 10px;
+            width: 100%;
+            font-size: 1.1em;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -139,11 +120,12 @@ hide: true
 <div class="navbar">
     <h1>Penpal Dashboard</h1>
     <button onclick="goHome()">Home</button>
+    <button onclick="viewSavedDrafts()">Saved Drafts</button>
 </div>
 
 <div class="dashboard">
     <div class="section" id="roughDraftsSection">
-        <h2 >Rough Drafts</h2>
+        <h2>Rough Drafts</h2>
         <div id="drafts">
             <p>No drafts available.</p>
         </div>
@@ -151,26 +133,46 @@ hide: true
         <button onclick="saveDraft()">Save Draft</button>
     </div>
     <div class="section" id="lettersReceivedSection">
-        <h2 color = "black" >Letters Received</h2>
+        <h2>Letters Received</h2>
         <div id="letters">
-            <p>No letters received yet.</p>
+            <div class="letter">Letter 1: Hello! Hope you're doing well!</div>
+            <div class="letter">Letter 2: Looking forward to your reply!</div>
         </div>
     </div>
 </div>
 
 <script>
-    let drafts = [];
-    let lettersReceived = ["Hello! Hope you're doing well!", "Looking forward to your reply!"];
+    let drafts = JSON.parse(localStorage.getItem("savedDrafts")) || [];
 
     function goHome() {
         alert("Going back to home...");
-        // Add code to navigate to the home page.
+    }
+
+    function viewSavedDrafts() {
+        const draftsDiv = document.getElementById("drafts");
+        draftsDiv.innerHTML = '';
+
+        if (drafts.length === 0) {
+            draftsDiv.innerHTML = '<p>No saved drafts available.</p>';
+            return;
+        }
+
+        drafts.forEach((draft, index) => {
+            const draftElement = document.createElement("div");
+            draftElement.className = "draft";
+            draftElement.innerHTML = `
+                <span>Saved Draft ${index + 1}: ${draft}</span>
+                <button class="delete-btn" onclick="deleteDraft(${index})">X</button>
+            `;
+            draftsDiv.appendChild(draftElement);
+        });
     }
 
     function saveDraft() {
         const draftInput = document.getElementById("draftInput").value;
         if (draftInput) {
             drafts.push(draftInput);
+            localStorage.setItem("savedDrafts", JSON.stringify(drafts));
             document.getElementById("draftInput").value = '';
             displayDrafts();
         } else {
@@ -181,28 +183,25 @@ hide: true
     function displayDrafts() {
         const draftsDiv = document.getElementById("drafts");
         draftsDiv.innerHTML = '';
+
         drafts.forEach((draft, index) => {
             const draftElement = document.createElement("div");
             draftElement.className = "draft";
-            draftElement.innerText = `Draft ${index + 1}: ${draft}`;
+            draftElement.innerHTML = `
+                <span>Draft ${index + 1}: ${draft}</span>
+                <button class="delete-btn" onclick="deleteDraft(${index})">X</button>
+            `;
             draftsDiv.appendChild(draftElement);
         });
     }
 
-    function displayLetters() {
-        const lettersDiv = document.getElementById("letters");
-        lettersDiv.innerHTML = '';
-        lettersReceived.forEach((letter, index) => {
-            const letterElement = document.createElement("div");
-            letterElement.className = "letter";
-            letterElement.innerText = `Letter ${index + 1}: ${letter}`;
-            lettersDiv.appendChild(letterElement);
-        });
+    function deleteDraft(index) {
+        drafts.splice(index, 1);
+        localStorage.setItem("savedDrafts", JSON.stringify(drafts));
+        displayDrafts();
     }
 
-    // Initial display
     displayDrafts();
-    displayLetters();
 </script>
 
 </body>
