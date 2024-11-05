@@ -6,6 +6,7 @@ hide: true
 # menu: nav/home.html
 ---
 
+<!-- NEW DASHBOARD -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">

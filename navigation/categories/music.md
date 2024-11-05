@@ -13,7 +13,7 @@ hide: true
         display: flex;
         flex-direction: column;
         align-items: center;
-        background-color: #f0f4f8;
+        background-color: #F0F4F8;
         margin: 0;
         padding: 20px;
     } */
@@ -43,56 +43,75 @@ hide: true
     }
     .dashboard {
         display: flex;
+        flex-direction: column;
         width: 100%;
         max-width: 1200px;
-        justify-content: space-between;
         gap: 20px;
     }
     .section {
-        flex: 1;
+        width: 100%;
         padding: 20px;
         background-color: white;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         border-radius: 8px;
+    }
+    .prompt-box {
+        background-color: #E0E7FF;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 1.2em;
+        color: #333;
+    }
+    .post-container {
         max-height: 400px;
         overflow-y: auto;
+        padding: 10px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 20px;
     }
-    .section h2 {
-        margin-top: 0;
-        font-size: 1.8em;
-        color: black;
-    }
-    .draft, .letter {
+    .post {
         border: 1px solid #ddd;
         padding: 10px;
         margin: 10px 0;
-        border-radius: 4px;
+        border-radius: 8px;
         font-size: 1.1em;
         color: black;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+        position: relative;
     }
-    .draft span {
-        flex-grow: 1;
+    .post-content {
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
-        margin-right: 10px; /* Add some space between text and delete button */
     }
-    .delete-btn {
-        background-color: #ff4d4d;
-        border: none;
-        color: white;
-        padding: 4px 6px; /* Smaller padding for a smaller button */
-        font-size: 0.8em; /* Smaller font size */
+    .see-more {
+        color: blue;
         cursor: pointer;
-        border-radius: 4px;
-        height: 28px; /* Standard button height */
-        width: 28px; /* Standard button width */
+        font-size: 0.9em;
+        margin-left: 5px;
     }
-    .delete-btn:hover {
-        background-color: #ff1a1a;
+    .reply-section, .reply {
+        margin-top: 10px;
+        padding-left: 20px;
+        font-size: 0.9em;
+        display: flex;
+        align-items: center;
+    }
+    .like-btn, .delete-btn {
+        margin-left: 10px;
+        cursor: pointer;
+        color: #333;
+        font-size: 1.1em;
+        border: none;
+        background-color: transparent;
+    }
+    .send-btn{
+        color: green; 
+    }
+    .like-btn:hover, .delete-btn:hover {
+        color: red;
     }
     textarea {
         width: 100%;
@@ -101,100 +120,105 @@ hide: true
         height: 120px;
         resize: none;
         margin-top: 10px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
     }
-    button {
+    .send-btn {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
         padding: 10px;
         width: 100%;
         font-size: 1.1em;
         cursor: pointer;
+        border-radius: 8px;
+        margin-top: 10px;
     }
 </style>
 
 <div class="navbar">
     <h1>Penpal Dashboard</h1>
     <button onclick="goHome()">Home</button>
-    <button onclick="viewSavedDrafts()">Saved Drafts</button>
-    <button onclick="chat()">Chatroom</button>
 </div>
-
 <div class="dashboard">
-    <div class="section" id="roughDraftsSection">
-        <h2>Rough Drafts</h2>
-        <div id="drafts">
-            <p>No drafts available.</p>
-        </div>
-        <textarea id="draftInput" placeholder="Write a rough draft..."></textarea>
-        <button onclick="saveDraft()">Save Draft</button>
+    <div class="section prompt-box">
+        Weekly Prompt: Describe your favorite childhood memory.
     </div>
-    <div class="section" id="lettersReceivedSection">
-        <h2>Letters Received</h2>
-        <div id="letters">
-            <!-- <div class="letter">Letter 1: Hello! Hope you're doing well!</div>
-            <div class="letter">Letter 2: Looking forward to your reply!</div> -->
-        </div>
+    <div class="section post-container" id="postsSection">
+        <!-- Posts will appear here -->
+    </div>
+    <div class="section">
+        <textarea id="postInput" placeholder="Write your letter..."></textarea>
+    </div>
+    <div>
+    <button class="send-btn" onclick="addPost()">Send</button>
     </div>
 </div>
-
 <script>
-    let drafts = JSON.parse(localStorage.getItem("savedDrafts")) || [];
-
+    username = "Soni Dhenuva"
+    let posts = JSON.parse(localStorage.getItem("savedPosts")) || [];
     function goHome() {
-        // alert("Going back to home...");
         window.location.href = "{{site.baseurl}}/"
     }
-
-    function viewSavedDrafts() {
-        const draftsDiv = document.getElementById("drafts");
-        draftsDiv.innerHTML = '';
-
-        if (drafts.length === 0) {
-            draftsDiv.innerHTML = '<p>No saved drafts available.</p>';
-            return;
-        }
-
-        drafts.forEach((draft, index) => {
-            const draftElement = document.createElement("div");
-            draftElement.className = "draft";
-            draftElement.innerHTML = `
-                <span>Saved Draft ${index + 1}: ${draft}</span>
-                <button class="delete-btn" onclick="deleteDraft(${index})">X</button>
-            `;
-            draftsDiv.appendChild(draftElement);
-        });
-    }
-
-    function saveDraft() {
-        const draftInput = document.getElementById("draftInput").value;
-        if (draftInput) {
-            drafts.push(draftInput);
-            localStorage.setItem("savedDrafts", JSON.stringify(drafts));
-            document.getElementById("draftInput").value = '';
-            displayDrafts();
+    function addPost() {
+        const postInput = document.getElementById("postInput").value;
+        if (postInput) {
+            const newPost = { content: postInput, likes: 0, replies: [] };
+            posts.push(newPost);
+            localStorage.setItem("savedPosts", JSON.stringify(posts));
+            document.getElementById("postInput").value = '';
+            displayPosts();
         } else {
-            alert("Draft cannot be empty!");
+            alert("Post cannot be empty!");
         }
     }
-
-    function displayDrafts() {
-        const draftsDiv = document.getElementById("drafts");
-        draftsDiv.innerHTML = '';
-
-        drafts.forEach((draft, index) => {
-            const draftElement = document.createElement("div");
-            draftElement.className = "draft";
-            draftElement.innerHTML = `
-                <span>Draft ${index + 1}: ${draft}</span>
-                <button class="delete-btn" onclick="deleteDraft(${index})">X</button>
+    function displayPosts() {
+        const postsSection = document.getElementById("postsSection");
+        postsSection.innerHTML = '';
+        posts.forEach((post, index) => {
+            const postElement = document.createElement("div");
+            postElement.className = "post";
+            postElement.innerHTML = `
+                <div class="post-content">${ username + " : " + post.content.substring(0, 100)}${post.content.length > 100 ? '...' : ''}</div>
+                ${post.content.length > 100 ? '<span class="see-more" onclick="seeMore(' + index + ')">See more</span>' : ''}
+                <button class="like-btn" onclick="likePost(${index})"> ❤️ ${post.likes}</button>
+                <button class="delete-btn" onclick="deletePost(${index})">🗑️</button>
+                <div class="reply-section">
+                    <input type="text" placeholder="Reply..." id="replyInput${index}" style="width: 70%;">
+                    <button class="send-btn" onclick="addReply(${index})">Reply</button>
+                </div>
+                <div class="replies" id="replies${index}">
+                    ${post.replies.map(reply => `<div class="reply">${username + " : " + reply}</div>`).join('')}
+                </div>
             `;
-            draftsDiv.appendChild(draftElement);
+            postsSection.appendChild(postElement);
         });
     }
-
-    function deleteDraft(index) {
-        drafts.splice(index, 1);
-        localStorage.setItem("savedDrafts", JSON.stringify(drafts));
-        displayDrafts();
+    function seeMore(index) {
+        const postContent = posts[index].content;
+        alert(postContent); // Alert to show full content; you may replace this with modal logic
     }
-
-    displayDrafts();
+    function likePost(index) {
+        posts[index].likes++;
+        localStorage.setItem("savedPosts", JSON.stringify(posts));
+        displayPosts();
+    }
+    function deletePost(index) {
+        posts.splice(index, 1);
+        localStorage.setItem("savedPosts", JSON.stringify(posts));
+        displayPosts();
+    }
+    function addReply(index) {
+        const replyInput = document.getElementById(`replyInput${index}`);
+        const replyText = replyInput.value;
+        if (replyText) {
+            posts[index].replies.push(replyText);
+            localStorage.setItem("savedPosts", JSON.stringify(posts));
+            replyInput.value = '';
+            displayPosts();
+        } else {
+            alert("Reply cannot be empty!");
+        }
+    }
+    displayPosts();
 </script>
