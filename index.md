@@ -51,7 +51,8 @@ hide: true
            background-color: #282828;
            border-radius: 10px;
            padding: 20px;
-           width: 210px;
+           /* width: 210px; */
+           width: 1500px;
            text-align: center;
            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
        }
